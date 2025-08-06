@@ -26,7 +26,18 @@ travis-ci = { repository = "gwihlidal/vk-mem-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-vulkanite = "0.0.10"
+vulkanite = { version = "0.0.11", features = [
+    "version_1_1",
+    "ext_dedicated_allocation",
+    "ext_bind_memory2",
+    "ext_buffer_device_address",
+    "ext_memory_priority",
+    "ext_maintenance4",
+    "ext_create_renderpass2",
+    "ext_depth_stencil_resolve",
+    "ext_dynamic_rendering",
+    "ext_maintenance5",
+]}
 bitflags = "2.5"
 
 [build-dependencies]
