@@ -1,14 +1,22 @@
 [package]
 name = "vk-mem"
 version = "0.4.0"
-authors = ["Graham Wihlidal <graham@wihlidal.ca>", "Zhixing Zhang <me@neoto.xin>"]
+authors = [
+    "Graham Wihlidal <graham@wihlidal.ca>",
+    "Zhixing Zhang <me@neoto.xin>",
+]
 description = "Rust ffi bindings and idiomatic wrapper for AMD Vulkan Memory Allocator (VMA)"
 homepage = "https://github.com/gwihlidal/vk-mem-rs"
 repository = "https://github.com/gwihlidal/vk-mem-rs"
 documentation = "https://docs.rs/vk-mem"
 readme = "README.md"
 keywords = ["vulkan", "vk", "ash", "memory", "allocator"]
-categories = ["api-bindings", "rendering", "rendering::engine", "rendering::graphics-api", ]
+categories = [
+    "api-bindings",
+    "rendering",
+    "rendering::engine",
+    "rendering::graphics-api",
+]
 license = "MIT/Apache-2.0"
 build = "build.rs"
 include = [
@@ -26,7 +34,7 @@ travis-ci = { repository = "gwihlidal/vk-mem-rs" }
 maintenance = { status = "actively-developed" }
 
 [dependencies]
-vulkanite = { version = "0.0.11", features = [
+vulkanite = { git = "https://github.com/Jerrody/vulkanite", features = [
     "version_1_1",
     "ext_dedicated_allocation",
     "ext_bind_memory2",
@@ -37,7 +45,7 @@ vulkanite = { version = "0.0.11", features = [
     "ext_depth_stencil_resolve",
     "ext_dynamic_rendering",
     "ext_maintenance5",
-]}
+] }
 bitflags = "2.5"
 
 [build-dependencies]
@@ -54,5 +62,5 @@ codegen-units = 1
 
 [features]
 default = []
-generate_bindings=["bindgen"]
-recording=[]
+generate_bindings = ["bindgen"]
+recording = []
