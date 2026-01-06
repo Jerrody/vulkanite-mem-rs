@@ -273,10 +273,7 @@ pub trait Alloc {
         )
         .into_result()?;
 
-        let allocations: Vec<Allocation> = allocations
-            .into_iter()
-            .map(|alloc| Allocation(alloc))
-            .collect();
+        let allocations: Vec<Allocation> = allocations.into_iter().map(Allocation).collect();
 
         Ok(allocations)
     }
@@ -295,7 +292,7 @@ pub trait Alloc {
         let mut allocation_info = MaybeUninit::zeroed();
         ffi::vmaAllocateMemoryForBuffer(
             self.allocator().internal,
-            buffer.clone(),
+            *buffer,
             &create_info,
             allocation.as_mut_ptr(),
             allocation_info.as_mut_ptr(),
@@ -318,7 +315,7 @@ pub trait Alloc {
         let mut allocation = MaybeUninit::zeroed();
         ffi::vmaAllocateMemoryForImage(
             self.allocator().internal,
-            image.clone(),
+            *image,
             &create_info,
             allocation.as_mut_ptr(),
             std::ptr::null_mut(),
@@ -352,7 +349,7 @@ pub trait Alloc {
         let mut allocation: ffi::VmaAllocation = std::mem::zeroed();
         ffi::vmaCreateBuffer(
             self.allocator().internal,
-            &*buffer_info,
+            buffer_info,
             &create_info,
             buffer.as_mut_ptr(),
             &mut allocation,
@@ -379,7 +376,7 @@ pub trait Alloc {
         let mut allocation: ffi::VmaAllocation = std::mem::zeroed();
         ffi::vmaCreateBufferWithAlignment(
             self.allocator().internal,
-            &*buffer_info,
+            buffer_info,
             &create_info,
             min_alignment,
             buffer.as_mut_ptr(),
@@ -418,7 +415,7 @@ pub trait Alloc {
         let mut allocation: ffi::VmaAllocation = std::mem::zeroed();
         ffi::vmaCreateImage(
             self.allocator().internal,
-            &*image_info,
+            image_info,
             &create_info,
             image.as_mut_ptr(),
             &mut allocation,

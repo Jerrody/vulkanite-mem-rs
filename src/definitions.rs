@@ -678,7 +678,7 @@ impl From<&ffi::VmaAllocationInfo> for AllocationInfo {
     fn from(info: &ffi::VmaAllocationInfo) -> Self {
         Self {
             memory_type: info.memoryType,
-            device_memory: unsafe { info.deviceMemory.clone() },
+            device_memory: info.deviceMemory,
             offset: info.offset,
             size: info.size,
             mapped_data: info.pMappedData,

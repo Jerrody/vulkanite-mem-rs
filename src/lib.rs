@@ -56,23 +56,23 @@ impl Allocator {
     pub unsafe fn new(create_info: AllocatorCreateInfo) -> vk::Result<Self> {
         let mut raw_create_info = ffi::VmaAllocatorCreateInfo {
             flags: create_info.flags.bits(),
-            physicalDevice: create_info.physical_device.clone(),
-            device: create_info.device.clone(),
+            physicalDevice: *create_info.physical_device,
+            device: *create_info.device,
             preferredLargeHeapBlockSize: create_info.preferred_large_heap_block_size,
             pAllocationCallbacks: create_info
                 .allocation_callbacks
-                .map(|a| ptr::from_ref(a))
+                .map(ptr::from_ref)
                 .unwrap_or(std::ptr::null()),
             pDeviceMemoryCallbacks: create_info
                 .device_memory_callbacks
-                .map(|a| ptr::from_ref(a))
+                .map(ptr::from_ref)
                 .unwrap_or(std::ptr::null()),
             pHeapSizeLimit: if create_info.heap_size_limits.is_empty() {
                 std::ptr::null()
             } else {
                 create_info.heap_size_limits.as_ptr()
             },
-            instance: create_info.instance.clone(),
+            instance: *create_info.instance,
             vulkanApiVersion: create_info.vulkan_api_version.into(),
             pVulkanFunctions: std::ptr::null(),
             pTypeExternalMemoryHandleTypes: if create_info
@@ -389,7 +389,7 @@ impl Allocator {
         allocation: &Allocation,
         buffer: &vk::raw::Buffer,
     ) -> vk::Result<()> {
-        ffi::vmaBindBufferMemory(self.internal, allocation.0, buffer.clone()).map_success(|| ())
+        ffi::vmaBindBufferMemory(self.internal, allocation.0, *buffer).map_success(|| ())
     }
 
     /// Binds buffer to allocation with additional parameters.
@@ -414,7 +414,7 @@ impl Allocator {
             self.internal,
             allocation.0,
             allocation_local_offset,
-            buffer.clone(),
+            *buffer,
             next,
         )
         .map_success(|| ())
@@ -438,7 +438,7 @@ impl Allocator {
         allocation: &Allocation,
         image: &vk::raw::Image,
     ) -> vk::Result<()> {
-        ffi::vmaBindImageMemory(self.internal, allocation.0, image.clone()).map_success(|| ())
+        ffi::vmaBindImageMemory(self.internal, allocation.0, *image).map_success(|| ())
     }
 
     /// Binds image to allocation with additional parameters.
@@ -463,7 +463,7 @@ impl Allocator {
             self.internal,
             allocation.0,
             allocation_local_offset,
-            image.clone(),
+            *image,
             next,
         )
         .map_success(|| ())

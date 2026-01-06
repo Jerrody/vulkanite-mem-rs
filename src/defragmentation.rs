@@ -34,7 +34,7 @@ impl<'a> DefragmentationContext<'a> {
     }
 
     /// Returns `false` if no more moves are possible or `true` if more defragmentations are possible.
-    pub fn begin_pass(&self, mover: impl FnOnce(&mut [DefragmentationMove]) -> ()) -> bool {
+    pub fn begin_pass(&self, mover: impl FnOnce(&mut [DefragmentationMove])) -> bool {
         let mut pass_info = ffi::VmaDefragmentationPassMoveInfo {
             moveCount: 0,
             pMoves: std::ptr::null_mut(),
@@ -55,7 +55,7 @@ impl<'a> DefragmentationContext<'a> {
             ffi::vmaEndDefragmentationPass(self.allocator.internal, self.raw, &mut pass_info)
         };
 
-        return result == vk::Status::Incomplete;
+        result == vk::Status::Incomplete
     }
 }
 
@@ -68,7 +68,7 @@ impl Allocator {
     pub unsafe fn begin_defragmentation(
         &self,
         info: &ffi::VmaDefragmentationInfo,
-    ) -> vk::Result<DefragmentationContext> {
+    ) -> vk::Result<DefragmentationContext<'_>> {
         let mut context: ffi::VmaDefragmentationContext = std::ptr::null_mut();
 
         ffi::vmaBeginDefragmentation(self.internal, info, &mut context).into_result()?;
