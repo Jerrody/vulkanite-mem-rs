@@ -19,6 +19,7 @@ use std::{
 static mut IS_ALLOCATOR_DROPPED: bool = false;
 
 /// Main allocator object
+#[derive(Clone, Copy)]
 pub struct Allocator {
     /// Pointer to internal VmaAllocator instance
     internal: ffi::VmaAllocator,
