@@ -14,7 +14,10 @@ use ash::prelude::VkResult;
 use ash::vk;
 use std::mem;
 
+static mut IS_DROPPED_ALLOCATOR: bool = false;
+
 /// Main allocator object
+#[derive(Clone, Copy)]
 pub struct Allocator {
     /// Pointer to internal VmaAllocator instance
     internal: ffi::VmaAllocator,
@@ -562,14 +565,17 @@ impl Allocator {
         )
         .result()
     }
-}
 
-/// Custom `Drop` implementation to clean up internal allocation instance
-impl Drop for Allocator {
-    fn drop(&mut self) {
+    pub unsafe fn drop(&mut self) {
         unsafe {
-            ffi::vmaDestroyAllocator(self.internal);
-            self.internal = std::ptr::null_mut();
+            if !IS_DROPPED_ALLOCATOR {
+                IS_DROPPED_ALLOCATOR = true;
+
+                ffi::vmaDestroyAllocator(self.internal);
+                self.internal = std::ptr::null_mut();
+            } else {
+                panic!("Attempting to drop an already dropped allocator!");
+            }
         }
     }
 }
