@@ -304,7 +304,7 @@ impl Allocator {
     ///
     /// This function always fails when called for allocation that was created with
     /// `AllocationCreateFlags::CAN_BECOME_LOST` flag. Such allocations cannot be mapped.
-    pub unsafe fn map_memory(&self, allocation: &mut Allocation) -> vk::Result<*mut u8> {
+    pub unsafe fn map_memory(&self, allocation: Allocation) -> vk::Result<*mut u8> {
         let mut mapped_data: *mut ::std::os::raw::c_void = ::std::ptr::null_mut();
         ffi::vmaMapMemory(self.internal, allocation.0, &mut mapped_data).into_result()?;
 
@@ -312,7 +312,7 @@ impl Allocator {
     }
 
     /// Unmaps memory represented by given allocation, mapped previously using `Allocator::map_memory`.
-    pub unsafe fn unmap_memory(&self, allocation: &mut Allocation) {
+    pub unsafe fn unmap_memory(&self, allocation: Allocation) {
         ffi::vmaUnmapMemory(self.internal, allocation.0);
     }
 
