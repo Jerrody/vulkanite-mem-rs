@@ -9,12 +9,14 @@ pub use definitions::*;
 pub use defragmentation::*;
 pub use pool::*;
 pub use virtual_block::*;
-use vulkanite::{vk, AsSlice, Handle};
+use vulkanite::{vk, AsSlice};
 
 use std::{
     mem::{self, MaybeUninit},
     ptr,
 };
+
+static mut IS_ALLOCATOR_DROPPED: bool = false;
 
 /// Main allocator object
 pub struct Allocator {
@@ -543,14 +545,17 @@ impl Allocator {
         )
         .map_success(|| ())
     }
-}
 
-/// Custom `Drop` implementation to clean up internal allocation instance
-impl Drop for Allocator {
-    fn drop(&mut self) {
+    pub unsafe fn drop(&mut self) {
         unsafe {
-            ffi::vmaDestroyAllocator(self.internal);
-            self.internal = std::ptr::null_mut();
+            if !IS_ALLOCATOR_DROPPED {
+                IS_ALLOCATOR_DROPPED = true;
+
+                ffi::vmaDestroyAllocator(self.internal);
+                self.internal = std::ptr::null_mut();
+            } else {
+                panic!("Attempting to drop an already dropped allocator!");
+            }
         }
     }
 }
